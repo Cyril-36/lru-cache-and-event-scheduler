@@ -214,15 +214,18 @@ Here n is the number of events and C is the cache capacity.
 
 | Function | Time | Extra space |
 |---|---|---|
+| `_Node.__init__` | O(1) | O(1) |
+| `_remove`, `_append_most_recent`, `_mark_recent` | O(1) | O(1) |
 | `LRUCache.__init__` | O(1) | O(1) |
 | `LRUCache.get` | Expected O(1) | O(1) |
 | `LRUCache.put` | Expected amortized O(1) | O(1) per call |
+| `_sorted_events` | O(n log n) | O(n) |
 | `can_attend_all` | O(n log n) | O(n) |
 | `min_rooms_required` | O(n log n) | O(n) |
 
 The cache as a whole stores at most C entries, each with a dictionary entry and a list node, so its total memory is O(C).
 
-The O(1) for the cache relies on hashing. If many keys collide, a single lookup can slow down, and every so often an insert triggers a resize of the dictionary. Averaged over many operations it is still constant time, which is the usual assumption when analysing an LRU cache.
+The O(1) for the cache relies on hashing, and every so often an insert triggers a resize of the dictionary. Resizing costs are amortized across insertions; expected O(1) performance assumes normal hash behaviour. Pathological collisions can still degrade performance.
 
 For the scheduler, sorting costs the most. After sorting, `can_attend_all` makes one O(n) pass. `min_rooms_required` pushes each end time once and pops it at most once, at O(log n) each, so the loop is also O(n log n). The extra space is the sorted copy plus the heap, which never holds more than n entries. Checking that every event has `start < end` takes O(n) and doesn't change these totals.
 
